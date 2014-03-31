@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>JQUERY CAMERA DIALOG</title>
+    <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/smoothness/jquery-ui.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <script src="../blink.cameradialog.js"></script>
+    <style>
+        .ui-dialog{font-size: 85%;}
+    </style>
+
+</head>
+<body>
+
+<div id="dialog" title="Basic dialog">
+    <p>This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
+</div>
+<input type="button" id="opendialog" value="open">
+<div id="image"><img src=""></div>
+<script>
+    $( "#dialog" )
+        .cameraDialog({
+            callback: {
+                use: function (img) {
+                    $("#image img").attr("src", img);
+                }
+            },
+            errors: {
+                "PERMISSION_DENIED": "1",
+                "NOT_SUPPORTED_ERROR": "2",
+                "MANDATORY_UNSATISFIED_ERROR": "3"
+            }
+        });
+
+    $("#opendialog").on("click", function() {
+        $("#dialog").cameraDialog();
+    });
+</script>
+
+</body>
+</html>
