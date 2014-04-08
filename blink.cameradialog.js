@@ -44,9 +44,13 @@
         $input = $elem.children('.input'),
         stream = $elem.data('stream');
 
-      $input.hide();
-      $video[0].pause();
-      $video.removeAttr('src');
+      if ($input) {
+        $input.hide();
+      }
+      if ($video && $video[0]) {
+        $video[0].pause();
+        $video.removeAttr('src');
+      }
       if (stream && stream.stop) {
         stream.stop();
         $elem.data('stream', null);
