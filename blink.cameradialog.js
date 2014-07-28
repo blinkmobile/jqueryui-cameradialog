@@ -126,12 +126,14 @@
           ctx.drawImage(video, 0, 0);
         }
 
-        self.end();
         $img.attr('src', $canvas[0].toDataURL('image/jpeg'));
         $output.show();
 
-        $elem.parent('.ui-dialog').find('button:gt(1)')
-          .button('enable');
+        setTimeout(function () {
+          self.end();
+          $elem.parent('.ui-dialog').find('button:gt(1)')
+            .button('enable');
+        }, 197);
       });
 
       getMedia.call(navigator, options, function (localMediaStream) {
@@ -172,7 +174,10 @@
           if (camCounter > 1) {
             //hooking onChange() of select with camera loading
             $select.on('change', function () {
-              self.begin();
+              self.end();
+              setTimeout(function () {
+                self.begin();
+              }, 197);
             });
             //prepand select box before camera
             self.element.find('figure.input').prepend($select);
