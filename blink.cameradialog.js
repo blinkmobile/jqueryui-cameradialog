@@ -73,6 +73,10 @@
           audio: false
         };
 
+      if (!getMedia) {
+        return; // nothing can be done
+      }
+
       //reset stream > this is required to swap camera
       if ($elem.data('stream')) {
         $video.attr("src", null);
@@ -188,7 +192,9 @@
         };
 
       if (typeof MediaStreamTrack === 'undefined' || typeof MediaStreamTrack.getSources === 'undefined') {
-        console.error('This browser does not support MediaStreamTrack.\n\nTry Chrome Canary.');
+        try {
+          console.error('This browser does not support MediaStreamTrack.\n\nTry Chrome Canary.');
+        } catch (ignore) {}
       } else {
         MediaStreamTrack.getSources(buildList);
       }
