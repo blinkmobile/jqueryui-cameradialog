@@ -2,7 +2,7 @@
  * Created by ashish on 31/03/2014.
  */
 /*jslint browser:true, indent:2, nomen:true*/
-/*global $, Modernizr, MediaStreamTrack*/
+/*global $, MediaStreamTrack*/
 
 (function () {
   'use strict';
@@ -74,7 +74,7 @@
         };
 
       //reset stream > this is required to swap camera
-      if (!!$elem.data('stream')) {
+      if ($elem.data('stream')) {
         $video.attr("src", null);
         $elem.data('stream').stop();
       }
@@ -142,7 +142,7 @@
       }, function (err) {
         var name, message, $dl = $elem.find("dl.error");
         name = err.name || err;
-        message = (self.options && self.options.errors && self.options.errors[name]) ? self.options.errors[name] : "";
+        message = self.options && self.options.errors && self.options.errors[name] ? self.options.errors[name] : "";
         $dl.find('dt').html(name);
         if (message !== '') {
           $dl.find('dd').html(message);
@@ -159,11 +159,14 @@
     getSources: function () {
       var self = this,
         buildList = function (sourceInfos) {
-          var $select = $('<select id="camerasource">'),
-            camCounter = 0;
-          for (var i = 0; i != sourceInfos.length; ++i) {
-            var sourceInfo = sourceInfos[i],
-              $option = $("<option>");
+          var $select = $('<select id="camerasource">');
+          var camCounter = 0;
+          var i;
+          var sourceInfo;
+          var $option;
+          for (i = 0; i !== sourceInfos.length; ++i) {
+            sourceInfo = sourceInfos[i];
+            $option = $("<option>");
             $option.prop('value', sourceInfo.id);
             if (sourceInfo.kind === 'video') {
               camCounter++;
