@@ -1,9 +1,10 @@
-jqueryui-cameradialog
-=====================
+# jqueryui-cameradialog
 
 jQuery UI Camera Dialog Widget
 
-```
+## usage
+
+```javascript
 $( "#dialog" )
         .cameraDialog({
             callback: {
@@ -18,4 +19,12 @@ $( "#dialog" )
             }
         });
 
+```
+
+## development
+
+Running tests:
+
+```sh
+npm test
 ```

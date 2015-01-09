@@ -20,7 +20,7 @@
       //attach elements to dialog
       this.element.html('').append($input).append($output).append($canvas).append($message);
 
-      this._setOption("buttons", this.button);
+      this._setOption('buttons', this.button);
       this.getSources();
       $(window).on('resize', $.proxy(this.resize, this));
       this.resize();
@@ -79,7 +79,7 @@
 
       //reset stream > this is required to swap camera
       if ($elem.data('stream')) {
-        $video.attr("src", null);
+        $video.attr('src', null);
         $elem.data('stream').stop();
       }
 
@@ -141,12 +141,12 @@
       });
 
       getMedia.call(navigator, options, function (localMediaStream) {
-        $video.attr("src", window.URL.createObjectURL(localMediaStream));
+        $video.attr('src', window.URL.createObjectURL(localMediaStream));
         $elem.data('stream', localMediaStream);
       }, function (err) {
-        var name, message, $dl = $elem.find("dl.error");
+        var name, message, $dl = $elem.find('dl.error');
         name = err.name || err;
-        message = self.options && self.options.errors && self.options.errors[name] ? self.options.errors[name] : "";
+        message = self.options && self.options.errors && self.options.errors[name] ? self.options.errors[name] : '';
         $dl.find('dt').html(name);
         if (message !== '') {
           $dl.find('dd').html(message);
@@ -170,7 +170,7 @@
           var $option;
           for (i = 0; i !== sourceInfos.length; ++i) {
             sourceInfo = sourceInfos[i];
-            $option = $("<option>");
+            $option = $('<option>');
             $option.prop('value', sourceInfo.id);
             if (sourceInfo.kind === 'video') {
               camCounter++;
@@ -193,7 +193,8 @@
 
       if (typeof MediaStreamTrack === 'undefined' || typeof MediaStreamTrack.getSources === 'undefined') {
         try {
-          console.error('This browser does not support MediaStreamTrack.\n\nTry Chrome Canary.');
+          /*eslint-disable no-console*/
+          window.console.error('This browser does not support MediaStreamTrack.\n\nTry Chrome Canary.');
         } catch (ignore) {}
       } else {
         MediaStreamTrack.getSources(buildList);
@@ -208,7 +209,7 @@
     },
     button: [
       {
-        "text": "rotate",
+        'text': 'rotate',
         click: function () {
           var $dialog = $(this), $video, orientation, rotateCSS;
           $video = $dialog.find('video');
@@ -226,21 +227,21 @@
         }
       },
       {
-        "text": "cancel",
+        'text': 'cancel',
         click: function () {
           var $dialog = $(this);
-          $dialog.cameraDialog("close");
+          $dialog.cameraDialog('close');
         }
       },
       {
-        "text": "recapture",
+        'text': 'recapture',
         click: function () {
           var $dialog = $(this);
-          $dialog.data("cameraDialog").begin();
+          $dialog.data('cameraDialog').begin();
         }
       },
       {
-        "text": "use",
+        'text': 'use',
         click: function () {
           var $dialog = $(this),
             options = $dialog.data('cameraDialog').options,
@@ -248,7 +249,7 @@
           if (options && options.callback && options.callback.use) {
             options.callback.use($img.attr('src'));
           }
-          $dialog.cameraDialog("close");
+          $dialog.cameraDialog('close');
         }
       }
     ]

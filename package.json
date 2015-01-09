@@ -1,0 +1,22 @@
+{
+  "name": "jqueryui-cameradialog",
+  "version": "1.0.2",
+  "description": "jQuery UI Camera Dialog Widget",
+  "main": "blink.cameradialog.js",
+  "scripts": {
+    "test": "$(npm bin)/eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blinkmobile/jqueryui-cameradialog.git"
+  },
+  "author": "",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/blinkmobile/jqueryui-cameradialog/issues"
+  },
+  "homepage": "https://github.com/blinkmobile/jqueryui-cameradialog",
+  "devDependencies": {
+    "eslint": "^0.11.0"
+  }
+}

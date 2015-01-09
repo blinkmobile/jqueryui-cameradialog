@@ -35,7 +35,7 @@
     "no-sync": 2,
     /* Stylistic Issues */
     "no-mixed-spaces-and-tabs": 2,
-    "no-underscore-dangle": 2,
+    "no-underscore-dangle": 1, // TODO: 2
     "quotes": [1, "single", "avoid-escape"]
   }
 }
