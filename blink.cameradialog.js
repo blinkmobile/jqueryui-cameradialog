@@ -6,12 +6,23 @@
 
 (function () {
   'use strict';
+  var getGetUserMedia = function () {
+    return window.URL && window.URL.createObjectURL && (navigator.getUserMedia ||
+      navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia);
+  };
+
   $.widget("blink.cameraDialog", $.ui.dialog, {
     open: function () {
       var $input = $('<figure class="input" style="text-align: center;">'),
         $output = $('<figure class="output" style="text-align: center;">'),
         $message = $('<dl class="error" style="display:none;">'),
-        $canvas = $('<canvas style="display:none">');
+        $canvas = $('<canvas style="display:none">'),
+        getMedia = getGetUserMedia();
+
+      if (!getMedia) {
+        return this._super(); // nothing can be done
+      }
 
       $input.append('<video autoplay width="100%">');
       $output.append('<img style="max-width: 100%; max-height: 100%" />');
@@ -42,7 +53,12 @@
       var $elem = this.element,
         $video = $elem.find('video'),
         $input = $elem.children('.input'),
-        stream = $elem.data('stream');
+        stream = $elem.data('stream'),
+        getMedia = getGetUserMedia();
+
+      if (!getMedia) {
+        return; // nothing can be done
+      }
 
       if ($input) {
         $input.hide();
@@ -59,9 +75,7 @@
     begin: function () {
       var $elem = this.element,
         self = this,
-        getMedia = window.URL && window.URL.createObjectURL && (navigator.getUserMedia ||
-          navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||
-          navigator.msGetUserMedia),
+        getMedia = getGetUserMedia(),
         $input = $elem.children('.input'),
         $output = $elem.children('.output'),
         $img = $output.children('img'),
@@ -201,6 +215,11 @@
       }
     },
     close: function () {
+      var getMedia = getGetUserMedia();
+      if (!getMedia) {
+        return; // nothing can be done
+      }
+
       $(window).off('resize', this.resize);
       this.end();
       this.element.html('');
