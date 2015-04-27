@@ -1,6 +1,6 @@
 {
   "name": "jqueryui-cameradialog",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "jQuery UI Camera Dialog Widget",
   "main": "blink.cameradialog.js",
   "scripts": {
