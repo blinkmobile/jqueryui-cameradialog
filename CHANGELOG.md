@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.5
+
+- PLATFORM-1607 MediaStream.stop() is deprecated
+  - Updated plugin to use `MediaStreamTrack.stop()`
+
+
 ## v1.0.4
 
 ### Fixed
