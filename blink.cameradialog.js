@@ -12,6 +12,21 @@
       navigator.msGetUserMedia);
   };
 
+  var stopStream = function (stream){
+    var tracks;
+
+    if (!stream){
+      return;
+    }
+
+    if (stream.stop) {
+      stream.stop();
+    } else if (stream.getTracks){
+      tracks = stream.getTracks();
+      tracks.length && tracks[0].stop();
+    }
+  };
+
   $.widget("blink.cameraDialog", $.ui.dialog, {
     open: function () {
       var $input = $('<figure class="input" style="text-align: center;">'),
@@ -54,6 +69,7 @@
         $video = $elem.find('video'),
         $input = $elem.children('.input'),
         stream = $elem.data('stream'),
+        mediaTrack,
         getMedia = getGetUserMedia();
 
       if (!getMedia) {
@@ -67,10 +83,9 @@
         $video[0].pause();
         $video.removeAttr('src');
       }
-      if (stream && stream.stop) {
-        stream.stop();
-        $elem.data('stream', null);
-      }
+
+      stopStream(stream);
+      $elem.data('stream', null);
     },
     begin: function () {
       var $elem = this.element,
@@ -94,7 +109,7 @@
       //reset stream > this is required to swap camera
       if ($elem.data('stream')) {
         $video.attr('src', null);
-        $elem.data('stream').stop();
+        stopStream($elem.data('stream'));
       }
 
       //fix camera selection
@@ -209,6 +224,7 @@
         try {
           /*eslint-disable no-console*/
           window.console.error('This browser does not support MediaStreamTrack.\n\nTry Chrome Canary.');
+          /*eslint-enable no-console*/
         } catch (ignore) {}
       } else {
         MediaStreamTrack.getSources(buildList);
