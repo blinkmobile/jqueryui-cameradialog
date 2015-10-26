@@ -69,7 +69,6 @@
         $video = $elem.find('video'),
         $input = $elem.children('.input'),
         stream = $elem.data('stream'),
-        mediaTrack,
         getMedia = getGetUserMedia();
 
       if (!getMedia) {
