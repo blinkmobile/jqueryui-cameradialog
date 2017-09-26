@@ -185,7 +185,6 @@
 
       getMedia.call(navigator, options, function (localMediaStream) {
         if (useSrcObject) {
-          console.log('localMediaStream', localMediaStream);
           video.srcObject = localMediaStream;
         } else {
           $video.attr('src', window.URL.createObjectURL(localMediaStream));
