@@ -33,7 +33,8 @@
         $output = $('<figure class="output" style="text-align: center;">'),
         $message = $('<dl class="error" style="display:none;">'),
         $canvas = $('<canvas style="display:none">'),
-        getMedia = getGetUserMedia();
+        getMedia = getGetUserMedia(),
+        _this = this;
 
       if (!getMedia) {
         return this._super(); // nothing can be done
@@ -47,10 +48,12 @@
       this.element.html('').append($input).append($output).append($canvas).append($message);
 
       this._setOption('buttons', this.button);
-      this.getSources();
       $(window).on('resize', $.proxy(this.resize, this));
       this.resize();
-      this.begin();
+      this.begin(function () {
+        // Call get sources after permission has been granted to the devices
+        _this.getSources();
+      });
 
       // Invoke the parent widget's open().
       return this._super();
@@ -86,7 +89,7 @@
       stopStream(stream);
       $elem.data('stream', null);
     },
-    begin: function () {
+    begin: function (callback) {
       var $elem = this.element,
         self = this,
         getMedia = getGetUserMedia(),
@@ -95,9 +98,14 @@
         $img = $output.children('img'),
         $canvas = $elem.find('canvas'),
         $video = $elem.find('video'),
+        video = $video[0],
+        useSrcObject = typeof video.srcObject !== 'undefined',
         $select = $elem.find('#camerasource'),
+        deviceId = $select.val(),
         options = {
-          video: true,
+          video: {
+            facingMode: 'environment'
+          },
           audio: false
         };
 
@@ -107,17 +115,25 @@
 
       //reset stream > this is required to swap camera
       if ($elem.data('stream')) {
-        $video.attr('src', null);
         stopStream($elem.data('stream'));
+        if (useSrcObject) {
+          video.srcObject = null;
+        } else {
+          $video.attr('src', null);
+        }
       }
 
       //fix camera selection
-      if ($select.val()) {
-        options.video = {
-          'optional': [
-            {sourceId: $select.val()}
-          ]
-        };
+      if (deviceId) {
+        if (useSrcObject) {
+          options.video.deviceId = {
+            exact: deviceId
+          };
+        } else {
+          options.video.optional = [
+            {sourceId: deviceId}
+          ];
+        }
       }
 
       $input.show();
@@ -128,8 +144,7 @@
         .button('disable');
 
       $video.one('click', function () {
-        var video = $video[0],
-          ctx = $canvas[0].getContext('2d'),
+        var ctx = $canvas[0].getContext('2d'),
           width,
           height;
 
@@ -169,8 +184,16 @@
       });
 
       getMedia.call(navigator, options, function (localMediaStream) {
-        $video.attr('src', window.URL.createObjectURL(localMediaStream));
+        if (useSrcObject) {
+          console.log('localMediaStream', localMediaStream);
+          video.srcObject = localMediaStream;
+        } else {
+          $video.attr('src', window.URL.createObjectURL(localMediaStream));
+        }
         $elem.data('stream', localMediaStream);
+        if (typeof callback === 'function') {
+          callback(localMediaStream);
+        }
       }, function (err) {
         var name, message, $dl = $elem.find('dl.error');
         name = err.name || err;
@@ -199,8 +222,8 @@
           for (i = 0; i !== sourceInfos.length; ++i) {
             sourceInfo = sourceInfos[i];
             $option = $('<option>');
-            $option.prop('value', sourceInfo.id);
-            if (sourceInfo.kind === 'video') {
+            $option.prop('value', sourceInfo.deviceId || sourceInfo.id);
+            if (sourceInfo.kind === 'videoinput' || sourceInfo.kind === 'video') {
               camCounter++;
               $option.text(sourceInfo.label || 'camera ' + camCounter);
               $select.append($option);
@@ -214,19 +237,27 @@
                 self.begin();
               }, 197);
             });
-            //prepand select box before camera
+            //prepend select box before camera
             self.element.find('figure.input').prepend($select);
+            // Trigger change event to ensure the correct camera is selected in drop down
+            $select.change();
           }
         };
 
-      if (typeof MediaStreamTrack === 'undefined' || typeof MediaStreamTrack.getSources === 'undefined') {
+      if (typeof navigator !== 'undefined' && typeof navigator.mediaDevices !== 'undefined' && typeof navigator.mediaDevices.enumerateDevices === 'function') {
+        navigator.mediaDevices.enumerateDevices()
+          .then(buildList)
+          .catch(function (e) {
+            window.console.error('An error occurred attempting to build device select input:', e);
+          });
+      } else if (typeof MediaStreamTrack !== 'undefined' && typeof MediaStreamTrack.getSources === 'function') {
+        MediaStreamTrack.getSources(buildList);
+      } else  {
         try {
           /*eslint-disable no-console*/
           window.console.error('This browser does not support MediaStreamTrack.\n\nTry Chrome Canary.');
           /*eslint-enable no-console*/
         } catch (ignore) {}
-      } else {
-        MediaStreamTrack.getSources(buildList);
       }
     },
     close: function () {
